@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
+import ModalProvider from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnarToaster } from "@/components/ui/sonner";
 
 const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Plura",
+  title: "Agency Virtue",
   description: "All in one Agency Solution",
 };
 
@@ -26,9 +27,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
-          <SonnarToaster position="bottom-left" />
+          <ModalProvider>
+            {children}
+            <Toaster />
+            <SonnarToaster position="bottom-left" />
+          </ModalProvider>
         </ThemeProvider>
       </body>
     </html>
