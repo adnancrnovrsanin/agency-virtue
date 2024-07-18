@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { NumberInput } from "@tremor/react";
 import { v4 } from "uuid";
-import { Loader2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import {
@@ -50,6 +49,7 @@ import {
 } from "@/lib/queries";
 import { Button } from "../ui/button";
 import Loading from "../global/loading";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   data?: Partial<Agency>;
@@ -140,7 +140,7 @@ const AgencyDetails = ({ data }: Props) => {
 
       const response = await upsertAgency({
         id: data?.id ? data.id : v4(),
-        customerId: "",
+        customerId: data?.customerId || custId || "",
         address: values.address,
         agencyLogo: values.agencyLogo,
         city: values.city,
@@ -284,7 +284,7 @@ const AgencyDetails = ({ data }: Props) => {
                       <div>
                         <FormLabel>Whitelabel Agency</FormLabel>
                         <FormDescription>
-                          Turning on whitelabel mode will show your agency logo
+                          Turning on whilelabel mode will show your agency logo
                           to all sub accounts by default. You can overwrite this
                           functionality through sub account settings.
                         </FormDescription>

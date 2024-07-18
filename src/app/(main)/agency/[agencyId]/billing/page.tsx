@@ -20,7 +20,6 @@ type Props = {
 };
 
 const page = async ({ params }: Props) => {
-  //CHALLENGE : Create the add on  products
   const addOns = await stripe.products.list({
     ids: addOnProducts.map((product) => product.id),
     expand: ["data.default_price"],
@@ -37,7 +36,7 @@ const page = async ({ params }: Props) => {
   });
 
   const prices = await stripe.prices.list({
-    product: process.env.NEXT_PLURA_PRODUCT_ID,
+    product: process.env.NEXT_AGENCY_VIRTUE_PRODUCT_ID,
     active: true,
   });
 
