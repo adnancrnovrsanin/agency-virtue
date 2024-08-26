@@ -8,12 +8,14 @@ import {
   TicketAndTags,
 } from "@/lib/types";
 import { useModal } from "@/providers/modal-provider";
-import { Lane, Ticket } from "@prisma/client";
-import { Flag, Plus } from "lucide-react";
+import { Lane, Ticket, User } from "@prisma/client";
+import { Flag, Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import PipelineLane from "./pipeline-lane";
+import AvatarCircles from "@/components/magicui/avatar-circles";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   lanes: LaneDetail[];
@@ -46,7 +48,20 @@ const PipelineView = ({
       ticketsFromAllLanes.push(i);
     });
   });
+  const allParticipatingUsersFunc: User[] = [];
+  ticketsFromAllLanes.forEach((ticket) => {
+    if (
+      ticket.Assigned &&
+      !allParticipatingUsersFunc.includes(ticket.Assigned)
+    ) {
+      allParticipatingUsersFunc.push(ticket.Assigned);
+    }
+  });
   const [allTickets, setAllTickets] = useState(ticketsFromAllLanes);
+  const [allParticipatingUsers, setAllParticipatingUsers] = useState<User[]>(
+    allParticipatingUsersFunc
+  );
+  const [ticketSearch, setTicketSearch] = useState<string>("");
 
   const handleAddLane = () => {
     setOpen(
@@ -137,8 +152,26 @@ const PipelineView = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="bg-white/60 dark:bg-background/60 rounded-xl p-4 use-automation-zoom-in">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl">{pipelineDetails?.name}</h1>
-          <Button className="flex items-center gap-4" onClick={handleAddLane}>
+          <div className="flex items-center justify-between space-x-4">
+            <h1 className="text-2xl">{pipelineDetails?.name}</h1>
+            <div className="flex items-center py-4 gap-2">
+              <Input
+                placeholder="Search ticket..."
+                value={ticketSearch}
+                onChange={(event) => {
+                  console.log(event.target.value.trim());
+                  setTicketSearch(event.target.value.trim());
+                }}
+                className="h-12"
+              />
+              <Search />
+            </div>
+            <AvatarCircles
+              numPeople={allParticipatingUsers.length}
+              avatarUrls={allParticipatingUsers.map((user) => user.avatarUrl)}
+            />
+          </div>
+          <Button className="flex items-center gap-2" onClick={handleAddLane}>
             <Plus size={15} />
             Create Lane
           </Button>
@@ -162,7 +195,11 @@ const PipelineView = ({
                     setAllTickets={setAllTickets}
                     subaccountId={subaccountId}
                     pipelineId={pipelineId}
-                    tickets={lane.Tickets}
+                    tickets={lane.Tickets.filter((ticket) =>
+                      ticket.name
+                        .toLowerCase()
+                        .includes(ticketSearch.toLowerCase())
+                    )}
                     laneDetails={lane}
                     index={index}
                     key={lane.id}

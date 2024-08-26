@@ -19,6 +19,7 @@ import { useModal } from "@/providers/modal-provider";
 import { Pipeline } from "@prisma/client";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
 type Props = {
@@ -67,13 +68,18 @@ const PipelineInfoBar = ({ pipelineId, pipelines, subAccountId }: Props) => {
                 <CommandGroup>
                   {pipelines.map((pipeline) => (
                     <CommandItem key={pipeline.id}>
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === pipeline.id ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {pipeline.name}
+                      <Link
+                        href={`/subaccount/${subAccountId}/pipelines/${pipeline.id}`}
+                        className="flex items-center"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            value === pipeline.id ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {pipeline.name}
+                      </Link>
                     </CommandItem>
                   ))}
                   <Button

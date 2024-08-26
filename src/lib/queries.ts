@@ -334,7 +334,25 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
         },
       },
       Pipeline: {
-        create: { name: "Lead Cycle" },
+        create: {
+          name: "Task Board",
+          Lane: {
+            create: [
+              {
+                name: "To Do",
+                order: 0,
+              },
+              {
+                name: "In Progress",
+                order: 1,
+              },
+              {
+                name: "Done",
+                order: 2,
+              },
+            ],
+          },
+        },
       },
       SidebarOption: {
         create: [
@@ -359,12 +377,7 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
             link: `/subaccount/${subAccount.id}/media`,
           },
           {
-            name: "Automations",
-            icon: "chip",
-            link: `/subaccount/${subAccount.id}/automations`,
-          },
-          {
-            name: "Pipelines",
+            name: "Boards",
             icon: "flag",
             link: `/subaccount/${subAccount.id}/pipelines`,
           },
@@ -585,7 +598,25 @@ export const upsertPipeline = async (
   const response = await db.pipeline.upsert({
     where: { id: pipeline.id || v4() },
     update: pipeline,
-    create: pipeline,
+    create: {
+      ...pipeline,
+      Lane: {
+        create: [
+          {
+            name: "To Do",
+            order: 0
+          },
+          {
+            name: "In Progress",
+            order: 1,
+          },
+          {
+            name: "Done",
+            order: 2,
+          },
+        ],
+      },
+    },
   });
 
   return response;
